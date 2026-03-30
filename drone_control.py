@@ -76,14 +76,15 @@ async def arm_and_start_offboard(drone):
 # --------------------------
 # PID位置控制主循环
 # --------------------------
-async def pid_position_control(drone):
+async def pid_position_control(drone,target_x,target_y,target_z):
     global run_flag
     pid_x = PIDController(kp=1.0, ki=0.01, kd=0.6)
-    pid_y = PIDController(kp=1.0, ki=0.03, kd=0.6)
-    pid_z = PIDController(kp=1.2, ki=0.0, kd=0.8)
+    pid_y = PIDController(kp=1.0, ki=0.01, kd=0.6)
+    pid_z = PIDController(kp=1.0, ki=0.01, kd=0.6)
 
-    target_x, target_y, target_z = 3.0, 0.0, -2.0
+ #   target_x, target_y, target_z = 3.0, 0.0, -2.0
     asyncio.create_task(check_stop())
+    
 
     while run_flag:
         try:
@@ -97,7 +98,19 @@ async def pid_position_control(drone):
             vz = pid_z.compute(target_z, cz)
 
             await drone.offboard.set_velocity_ned(VelocityNedYaw(vx, vy, vz, 0.0))
-            print(f"目标X={target_x:.1f},{target_y:.1f},{target_z:.1f} 当前X={cx:.1f},{cy:.1f},{cz:.1f}", end="\r")
+            await asyncio.sleep(0.05)
+            #print(f"目标:{target_x:.1f},{target_y:.1f}，{target_z:.1f} now{cx:.1f},{cy:.1f},{cz:.1f}")
+            #print(f"目标:{target_x:.1f},{target_y:.1f},{target_z:.1f} 当前X:{cx:.1f},{cy:.1f},{cz:.1f}", end="\r")
+            #print(f"速度：{vx:.1f},{vy:.1f},{vz:.1f}")
+            error_x = abs(target_x - cx)  # 这里必须加 abs！！！
+            error_y = abs(target_y - cy)
+            error_z = abs(target_z - cz)
+            #print(f"{error_x},{error_y},{error_z}")
+            
+            if error_x<=0.5 and error_y<=0.5and error_z<=0.5:
+            	print(f"ok")
+            	break
+            	
         except:
             pass
         await asyncio.sleep(0.05)
