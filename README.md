@@ -32,6 +32,10 @@ Python 3.8+
 ## 成果展示
 1.square.py
 <img width="1106" height="590" alt="图片" src="https://github.com/user-attachments/assets/e0d02542-ae75-4bcf-8c6e-96b53d8402f9" />
-2.PID+A*静态避障飞行
+2.规划与飞行
+
+<img width="1106" height="1149" alt="图片" src="https://github.com/user-attachments/assets/b728df0e-5bb6-40ee-bd23-4fd2f54e7bfc" />
+
+3.PID+A*静态避障飞行
 <img width="1107" height="708" alt="图片" src="https://github.com/user-attachments/assets/4977840a-7a8c-4675-bdc1-8a5e0cb46a1d" />
 3.MPC
