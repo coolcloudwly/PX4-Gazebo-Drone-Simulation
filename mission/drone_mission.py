@@ -13,19 +13,19 @@ async def run_mission(waypoints, system_address="udp://:14540"):
     # 初始化无人机对象并连接
     drone = System()
     await drone.connect(system_address=system_address)
-    print("✅ 等待无人机连接...")
+    print(" 等待无人机连接...")
     
     # 等待无人机连接成功
     async for state in drone.core.connection_state():
         if state.is_connected:
-            print("✅ 已连接无人机！")
+            print(" 已连接无人机！")
             break
 
     # 等待飞控初始化完成
-    print("⏳ 等待飞控初始化...")
+    print(" 等待飞控初始化...")
     async for health in drone.telemetry.health():
         if health.is_global_position_ok and health.is_home_position_ok:
-            print("✅ 飞控初始化完成")
+            print(" 飞控初始化完成")
             break
 
     # 构建航点任务项（兼容新版MAVSDK）
@@ -52,14 +52,14 @@ async def run_mission(waypoints, system_address="udp://:14540"):
     # 上传航点任务
     mission_plan = MissionPlan(mission_items)
     await drone.mission.set_return_to_launch_after_mission(True)
-    print("⏳ 正在上传航点任务...")
+    print(" 正在上传航点任务...")
     await drone.mission.upload_mission(mission_plan)
-    print("✅ 航点上传成功！")
+    print(" 航点上传成功！")
 
     # 解锁电机并启动任务
-    print("⏳ 解锁电机...")
+    print(" 解锁电机...")
     await drone.action.arm()
-    print("🚀 开始执行任务！")
+    print(" 开始执行任务！")
     await drone.mission.start_mission()
 
     # 监控任务进度
@@ -69,9 +69,9 @@ async def run_mission(waypoints, system_address="udp://:14540"):
         print(f"飞行进度：{current}/{total}")
         
         if current == total:
-            print("✅ 所有航点飞行完成，自动返航中...")
+            print(" 所有航点飞行完成，自动返航中...")
             break
 
     await asyncio.sleep(2)
-    print("🏁 任务全部完成！")
+    print(" 任务全部完成！")
 
