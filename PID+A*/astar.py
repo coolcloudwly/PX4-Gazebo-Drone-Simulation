@@ -1,5 +1,5 @@
 # astar3d_lib.py
-# 3D A* 子程序库（恢复26方向斜向移动）
+# 3D A* 子程序库
 import heapq
 import math
 import matplotlib.pyplot as plt
@@ -28,7 +28,7 @@ class Node3D:
                 self.z == other.z)
 
 # --------------------------
-# 子程序 2：生成26个全方向（恢复斜向移动）
+# 子程序 2：生成26个全方向
 # --------------------------
 def get_26_directions():
     dirs = []
@@ -49,13 +49,13 @@ def distance_3d(p1, p2):
     return math.sqrt((x1-x2)**2 + (y1-y2)**2 + (z1-z2)**2)
 
 # --------------------------
-# 子程序 4：获取合法邻居（使用26方向）
+# 子程序 4：获取合法邻居
 # --------------------------
 def get_valid_neighbors(current_node, grid):
     max_z = len(grid)
     max_y = len(grid[0]) if max_z else 0
     max_x = len(grid[0][0]) if max_y else 0
-    dirs = get_26_directions()  # 恢复26方向
+    dirs = get_26_directions() 
     neighbors = []
 
     for dx, dy, dz in dirs:
