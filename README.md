@@ -1,6 +1,5 @@
 # PX4-Gazebo-Drone-Simulation
 # 基于PX4的多旋翼无人机自主飞行控制系统
-基于PX4与Gazebo的无人机仿真、PID/MPC控制、航点飞行与算法验证
 
 ## 实现功能
 - PX4 + Gazebo 环境搭建与软件在环仿真（SITL）
