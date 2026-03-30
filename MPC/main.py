@@ -22,9 +22,9 @@ async def main():
 
     await asyncio.sleep(2)
     await offboard.start_offboard(drone_sys)
-    print("✅ OFFBOARD 启动成功")
+    print(" OFFBOARD 启动成功")
 
-    print(f"\n🎯 飞往目标：({TARGET_X}, {TARGET_Y}, {-TARGET_Z}m)")
+    print(f"\n 飞往目标：({TARGET_X}, {TARGET_Y}, {-TARGET_Z}m)")
 
     start_t = asyncio.get_event_loop().time()
     while asyncio.get_event_loop().time() - start_t < 50:
@@ -57,7 +57,7 @@ async def main():
         await asyncio.sleep(0.1)
 
     await drone.land(drone_sys)
-    print("\n🎉 已精准到达目标！")
+    print("\n 已精准到达目标！")
 
 if __name__ == "__main__":
     asyncio.run(main())
