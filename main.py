@@ -1,68 +1,64 @@
 import asyncio
-from drone_control import (
+import numpy as np
+from mavsdk import System
+import drone
+import offboard
+import telemetry
 
-    connect_drone,
-    suppress_all_errors,
-    wait_drone_ready,
-    arm_and_start_offboard,
-    pid_position_control,
-    stop_offboard_safe
-)
-
-from astar import search_path_3d
-from map import grid_3d,start_point,end_point
-from get_pos import get_pos,gazebo_enu_to_pixhawk_ned
-from smoothway import smooth_path_3d
+# ---------------------------
+# 目标点：(1, 1, -3)
+# ---------------------------
+TARGET_X = 1.0
+TARGET_Y = 1.0
+TARGET_Z = -3.0
 
 async def main():
-    # 屏蔽错误
-    suppress_all_errors()
-    
-    # 1. 连接无人机
-    drone = await connect_drone()
-    
-    # 2. 等待就绪
-    await wait_drone_ready(drone)
-    
-    # 3. 解锁并启动OFFBOARD
-    success = await arm_and_start_offboard(drone)
-    
-    if not success:
-        return
-    
-    path= search_path_3d(grid_3d,start_point,end_point)
-    
-    # 2. ✅ 平滑处理（关键）
-    path_smoothed = smooth_path_3d(path)
-    
-    h_x,h_y,h_z= get_pos()
-    print(f"获取起点 {h_x:.1f},{h_y:.1f},{h_z:.1f}")
-    
-    for idx, pos in enumerate(path_smoothed):
-    
-    	x,y,z=pos
-    	print(f"前往目标绝对点 第{idx+1}点{x:.1f},{y:.1f},{z:.1f}")
-    	
-    	
-    	target_x,target_y,target_z=gazebo_enu_to_pixhawk_ned(x,y,z,(h_x,h_y,h_z))
-    	print(f"获取目标相对点 第{idx+1}点{target_x:.1f},{target_y:.1f},{target_z:.1f}")
-    	
-    	# 4. PID定点控制
-    	
-    	await pid_position_control(drone,target_x,target_y,target_z)
-    	
-    # 5. 安全停
-    await stop_offboard_safe(drone) 
-    
-    print(path)
-    print(path_smoothed)
-	    
-	    
-	   
+    drone_sys = System()
+
+    await drone.connect(drone_sys, "udp://:14540")
+    await drone.wait_for_arming(drone_sys)
+    await drone.arm(drone_sys)
+    await drone.takeoff(drone_sys, 2.0)
+
+    await asyncio.sleep(2)
+    await offboard.start_offboard(drone_sys)
+    print("✅ OFFBOARD 启动成功")
+
+    print(f"\n🎯 飞往目标：({TARGET_X}, {TARGET_Y}, {-TARGET_Z}m)")
+
+    start_t = asyncio.get_event_loop().time()
+    while asyncio.get_event_loop().time() - start_t < 50:
+        state = await telemetry.get_state(drone_sys)
+        cx, cy, cz, _, _, _ = state
+
+        # ==========================
+        # 水平：位置→速度，必到点
+        # ==========================
+        kp = 0.35
+        vx = (TARGET_X - cx) * kp
+        vy = (TARGET_Y - cy) * kp
+
+        vx = np.clip(vx, -0.4, 0.4)
+        vy = np.clip(vy, -0.4, 0.4)
+
+        # ==========================
+        # 高度锁死 -3.0
+        # ==========================
+        if cz > TARGET_Z + 0.1:
+            vz = -0.15
+        elif cz < TARGET_Z - 0.1:
+            vz = 0.15
+        else:
+            vz = 0.0
+
+        await offboard.send_vel(drone_sys, vx, vy, vz)
+        print(f"[飞行] X:{cx:+.1f} Y:{cy:+.1f} Z:{cz:+.1f}")
+
+        await asyncio.sleep(0.1)
+
+    await drone.land(drone_sys)
+    print("\n🎉 已精准到达目标！")
 
 if __name__ == "__main__":
-    try:
-        asyncio.run(main())
-    except:
-        pass
+    asyncio.run(main())
 
