@@ -40,7 +40,7 @@ async def connect_drone():
     print("等待无人机连接...")
     async for state in drone.core.connection_state():
         if state.is_connected:
-            print("✅ 无人机已连接！")
+            print(" 无人机已连接！")
             break
         await asyncio.sleep(0.1)
     return drone
@@ -52,7 +52,7 @@ async def wait_drone_ready(drone):
     print("等待无人机就绪...")
     async for health in drone.telemetry.health():
         if health.is_armable:
-            print("✅ 飞控就绪！")
+            print(" 飞控就绪！")
             break
         await asyncio.sleep(0.2)
 
@@ -60,14 +60,14 @@ async def wait_drone_ready(drone):
 # 解锁 + 启动OFFBOARD
 # --------------------------
 async def arm_and_start_offboard(drone):
-    print("🚀 解锁电机")
+    print(" 解锁电机")
     await drone.action.arm()
     await asyncio.sleep(0.5)
     await drone.offboard.set_velocity_ned(VelocityNedYaw(0.0, 0.0, 0.0, 0.0))
     try:
         await drone.offboard.start()
-        print("✅ OFFBOARD 启动成功！")
-        print("💡 按 回车 停止控制")
+        print(" OFFBOARD 启动成功！")
+        print(" 按 回车 停止控制")
         return True
     except:
         await drone.action.disarm()
@@ -108,8 +108,8 @@ async def pid_position_control(drone):
 async def stop_offboard_safe(drone):
     try:
         await drone.offboard.stop()
-        print("\n✅ 已停止控制，无人机会自动悬停")
-        print("👉 可在QGC或Gazebo中手动降落")
+        print("\n 已停止控制，无人机会自动悬停")
+
     except:
         pass
 
