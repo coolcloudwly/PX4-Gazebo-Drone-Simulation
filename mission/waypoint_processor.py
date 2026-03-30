@@ -4,7 +4,6 @@ def smooth_path_to_waypoints():
     将平滑路径转换为去重后的航点列表
     返回：[[纬度, 经度, 高度], ...]
     """
-    # 示例平滑路径（可根据实际需求替换为动态生成逻辑）
     smooth_path = [
         (47.3977419, 8.5455937, 10),
         (47.3977419, 8.5459937, 10),
@@ -22,6 +21,6 @@ def smooth_path_to_waypoints():
         waypoints.append([lat, lon, alt])
         last_lat, last_lon = lat, lon
     
-    print(f"✅ 平滑路径转换完成，共 {len(waypoints)} 个航点")
+    print(f" 平滑路径转换完成，共 {len(waypoints)} 个航点")
     return waypoints
 
