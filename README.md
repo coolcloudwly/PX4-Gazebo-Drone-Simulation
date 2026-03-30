@@ -38,4 +38,7 @@ Python 3.8+
 
 3.PID+A*静态避障飞行
 <img width="1107" height="708" alt="图片" src="https://github.com/user-attachments/assets/4977840a-7a8c-4675-bdc1-8a5e0cb46a1d" />
-3.MPC
+3.MPC循迹飞行
+
+<img width="1960" height="1130" alt="2026-03-30 13-14-27 的屏幕截图" src="https://github.com/user-attachments/assets/93aba499-fe3f-46ae-be95-3f28564e5d03" />
+
