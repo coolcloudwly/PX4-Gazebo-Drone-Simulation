@@ -8,7 +8,7 @@ async def run():
     drone = System()
     print(" 正在连接无人机（适配你的14540端口）...")
 
-    # 核心修改：连接PX4显示的remote port 14540
+    #连接PX4显示的remote port 14540
     await drone.connect(system_address="udp://:14540")
 
     # 2. 等待连接成功
