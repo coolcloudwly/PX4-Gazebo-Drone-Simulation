@@ -1,5 +1,5 @@
 async def get_state(drone):
-    # 兼容所有 mavsdk 版本：position_velocity_ned
+
     data = await drone.telemetry.position_velocity_ned().__anext__()
     
     pos = data.position
